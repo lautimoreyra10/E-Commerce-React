@@ -34,7 +34,32 @@ const ProductDetail = () => {
       setLoading(false);
     }
   }, [id]); // Dependiendo de 'id', vuelve a cargar el producto
-  
+
+  const addToCart = () => {
+    if (!product) return;
+
+    // Obtener el carrito actual desde localStorage
+    const cartJson = localStorage.getItem('cart');
+    const storedCart = cartJson ? JSON.parse(cartJson) : [];
+
+    // Comprobar si el producto ya está en el carrito
+    const existingProductIndex = storedCart.findIndex((item: any) => item.id === product.id);
+
+    if (existingProductIndex >= 0) {
+      // Si el producto ya está en el carrito, aumentar la cantidad
+      storedCart[existingProductIndex].quantity += 1;
+    } else {
+      // Si el producto no está en el carrito, agregarlo con cantidad 1
+      storedCart.push({ ...product, quantity: 1 });
+    }
+
+    // Actualizar el carrito en localStorage
+    localStorage.setItem('cart', JSON.stringify(storedCart));
+
+    // Opcional: Puedes mostrar un mensaje de éxito o alguna animación
+    alert('Producto agregado al carrito');
+  };
+
   if (loading) {
     return <div>Cargando...</div>;
   }
@@ -67,9 +92,8 @@ const ProductDetail = () => {
               </p>
               <p className="font-bold text-xl mb-6">{product.stock} unidades disponibles</p> {/* Stock */}
               <button
-                id="add-to-cart"
+                onClick={addToCart}
                 className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition w-full"
-                data-product-id={product.id}
               >
                 Agregar al Carrito
               </button>
