@@ -74,7 +74,7 @@ const ProductDetail = () => {
 
   return (
     <div>
-      <NavBar />
+      <NavBar/>
       {product ? (
         <div className="container mx-auto max-w-screen-lg px-4 py-6">
           <div className="flex flex-col lg:flex-row gap-8">
