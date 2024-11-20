@@ -59,6 +59,10 @@ const ProductDetail = () => {
     // Opcional: Puedes mostrar un mensaje de éxito o alguna animación
     alert('Producto agregado al carrito');
   };
+  const cartRedirect = () => {
+    addToCart();
+    window.location.href = '/cart';
+  };
 
   if (loading) {
     return <div>Cargando...</div>;
@@ -96,6 +100,9 @@ const ProductDetail = () => {
                 className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition w-full"
               >
                 Agregar al Carrito
+              </button>
+              <button onClick={cartRedirect} className="mt-4 px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition w-full">
+                Comprar Ahora
               </button>
             </div>
           </div>
