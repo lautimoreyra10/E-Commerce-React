@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from "react-router-dom";
 
 type NavBarProps = {
@@ -21,11 +22,13 @@ const NavBar: React.FC<NavBarProps> = ({
     setInputValue(searchTerm); // Sincroniza el valor del input con el searchTerm
   }, [searchTerm]);
 
+  const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0(); // Hooks de Auth0
+
   // Maneja el cambio en el campo de búsqueda
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);  // Actualizar el estado local del input
-    onSearch(value);  // Llamar la función de búsqueda que se pasa desde el Home
+    onSearch(value);  // Llamar a la función de búsqueda que se pasa desde el Home
   };
 
   // Maneja la selección de una sugerencia
@@ -34,6 +37,7 @@ const NavBar: React.FC<NavBarProps> = ({
     onSearch(suggestion);  // Llamar la función de búsqueda con la sugerencia seleccionada
   };
 
+  // Renderizar el contenido de la navegación
   return (
     <nav className="bg-gray-800 text-white p-4">
       <div className="max-w-screen-xl mx-auto flex justify-between items-center">
@@ -68,6 +72,17 @@ const NavBar: React.FC<NavBarProps> = ({
           <Link to="/">Inicio</Link>
           <Link to="/profile">Mi Cuenta</Link>
           <Link to="/about">Acerca de</Link>
+
+          {/* Lógica de Login/Logout con Auth0 */}
+          {!isAuthenticated ? (
+            <button onClick={() => loginWithRedirect()}>Iniciar sesión</button>
+          ) : (
+            <div>
+              <span>Bienvenido, {user?.name}</span>
+              <button onClick={() => logout({ returnTo: window.location.origin })}>Cerrar sesión</button>
+            </div>
+          )}
+
           <button
             id="user-icon-button"
             className="user-icon-button"

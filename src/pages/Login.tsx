@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import NavBar from '../components/NavBar';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -28,7 +29,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-12 p-6 bg-white shadow-lg rounded-lg">
+    <div className="flex flex-col max-w-md mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h1>Iniciar sesión</h1>
       <form
         onSubmit={(e) => {
@@ -36,7 +37,8 @@ const LoginPage: React.FC = () => {
           handleLogin();
         }}
       >
-        <input
+        <input 
+          className='m-4 p-2 border border-gray-300 rounded-md'
           type="text"
           id="email"
           placeholder="Correo electrónico"
@@ -44,15 +46,15 @@ const LoginPage: React.FC = () => {
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
+          className='m-4 p-2 border border-gray-300 rounded-md'
           type="password"
           id="password"
           placeholder="Contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit">Iniciar sesión</button>
       </form>
-
+      <button className ='m-4 p-2 bg-blue-500 text-white rounded-md' type="submit">Iniciar sesión</button>
       {message && <p>{message}</p>} {/* Condicionalmente renderiza el mensaje */}
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import NavBar from "../components/NavBar";
 import { useNavigate } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type Product = {
   id: number;
@@ -19,11 +20,12 @@ type Category = {
 };
 
 const Home: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);  // Todos los productos
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);  // Productos filtrados
-  const [categories, setCategories] = useState<Category[]>([]);  // Categorías
-  const [searchProduct, setSearchProduct] = useState<string>("");  // Término de búsqueda
-  const [searchSuggestions, setSearchSuggestions] = useState<Product[]>([]);  // Sugerencias de búsqueda
+  const { loginWithRedirect, isAuthenticated } = useAuth0(); // Mueve aquí el uso del hook
+  const [products, setProducts] = useState<Product[]>([]); // Todos los productos
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); // Productos filtrados
+  const [categories, setCategories] = useState<Category[]>([]); // Categorías
+  const [searchProduct, setSearchProduct] = useState<string>(""); // Término de búsqueda
+  const [searchSuggestions, setSearchSuggestions] = useState<Product[]>([]); // Sugerencias de búsqueda
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -49,51 +51,46 @@ const Home: React.FC = () => {
     fetchData();
   }, []);
 
-
   const handleProductClick = (productId: number) => {
     navigate(`/product/${productId}`);
   };
 
-  // Filtrar productos por búsqueda
   const handleSearch = async (searchProduct: string) => {
     try {
       if (!searchProduct.trim()) {
-        // Si el campo está vacío, mostramos todos los productos originales
-        setFilteredProducts(products); // 'products' es tu lista completa de productos iniciales
+        setFilteredProducts(products); // Mostrar todos los productos si no hay búsqueda
         return;
       }
-  
+
       const response = await fetch(
         `https://commercial-api.vulktech.com/products/search?searchProduct=${searchProduct}`
       );
       const data = await response.json();
-  
+
       if (data.products && Array.isArray(data.products)) {
-        setFilteredProducts(data.products); // Actualizamos con los productos filtrados
+        setFilteredProducts(data.products);
       } else {
-        setFilteredProducts([]); // Si no hay productos, dejamos el array vacío
+        setFilteredProducts([]);
       }
     } catch (error) {
       console.error("Error al buscar productos:", error);
-      setFilteredProducts([]); // Si hay un error, dejamos el array vacío
+      setFilteredProducts([]);
     }
   };
-  
-  // Filtrar productos por categoría
+
   const handleFilterCategory = (category: string) => {
     let filtered = category === "All" ? products : products.filter((product) => product.category === category);
     setFilteredProducts(filtered);
   };
 
-  // Ordenar productos por precio
-  const handleSortPrice = (order: 'asc' | 'desc') => {
+  const handleSortPrice = (order: "asc" | "desc") => {
     let sorted = [...filteredProducts].sort((a, b) => {
-      return order === 'asc' ? a.price - b.price : b.price - a.price;
+      return order === "asc" ? a.price - b.price : b.price - a.price;
     });
     setFilteredProducts(sorted);
   };
 
-  return (
+  return isAuthenticated ? (
     <div className="font-sans text-gray-700">
       <NavBar
         onSearch={handleSearch}
@@ -103,8 +100,6 @@ const Home: React.FC = () => {
         onSortPrice={handleSortPrice}
         categories={categories}
       />
-      
-      {/* Filtros y clasificación en la parte superior derecha */}
       <div className="max-w-screen-xl mx-auto px-4 mt-10 flex justify-between items-center">
         <div className="flex space-x-4">
           <select onChange={(e) => handleFilterCategory(e.target.value)}>
@@ -121,8 +116,6 @@ const Home: React.FC = () => {
           </select>
         </div>
       </div>
-
-      {/* Productos */}
       <div className="container mx-auto max-w-screen-xl px-4 mt-10">
         <div className="flex flex-wrap gap-5">
           {filteredProducts.length > 0 ? (
@@ -139,6 +132,15 @@ const Home: React.FC = () => {
             <p>No hay productos disponibles.</p>
           )}
         </div>
+      </div>
+    </div>
+  ) : (
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 ">
+      <div className="rounded-lg shadow-lg p-12 bg-white">
+      <p className="text-red-500 text-center text-2xl">No estás autenticado.</p> <p className="m-4 text-center"> Inicia sesión para continuar.</p>
+      <div className="text-center">
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => loginWithRedirect()}>Iniciar sesión</button>
+      </div>
       </div>
     </div>
   );
