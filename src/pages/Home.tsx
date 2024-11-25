@@ -71,7 +71,6 @@ const Home: React.FC = () => {
       if (data.products && Array.isArray(data.products)) {
         setFilteredProducts(data.products); // Actualizamos con los productos filtrados
       } else {
-        console.warn("Formato inesperado en la respuesta de la API:", data);
         setFilteredProducts([]); // Si no hay productos, dejamos el array vacío
       }
     } catch (error) {
