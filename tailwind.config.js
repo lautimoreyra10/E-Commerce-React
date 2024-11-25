@@ -5,7 +5,27 @@ module.exports = {
     './src/**/*.{js,jsx,ts,tsx}',  // Cambié esto para que solo se enfoque en archivos React/TSX
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'cart-bg': '#17171B',
+        'cart-hover': '#0A0A0C',
+        'cart-tick': '#FF328B',
+      },
+      keyframes: {
+        scaleUp: {
+          '0%': { transform: 'scale(0)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        rotateIn: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+      },
+      animation: {
+        scaleUp: 'scaleUp 0.3s ease-in-out',
+        rotateIn: 'rotateIn 0.5s ease-in-out',
+      },
+    },
   },
   plugins: [],
 }

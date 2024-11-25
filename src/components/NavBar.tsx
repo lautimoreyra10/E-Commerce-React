@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 type NavBarProps = {
   onSearch: (searchTerm: string) => void;
   searchTerm: string;
-  searchSuggestions: any[];
+  searchSuggestions: any[];  // Sugerencias de búsqueda
   onFilterCategory: (category: string) => void;
   onSortPrice: (order: "asc" | "desc") => void;
   categories: any[];
@@ -14,37 +14,37 @@ const NavBar: React.FC<NavBarProps> = ({
   onSearch,
   searchTerm,
   searchSuggestions,
-  onFilterCategory,
-  onSortPrice,
-  categories,
 }) => {
-  const [inputValue, setInputValue] = useState<string>(searchTerm);
+  const [inputValue, setInputValue] = useState(searchTerm); // Para controlar el valor del input
 
   useEffect(() => {
-    setInputValue(searchTerm);
+    setInputValue(searchTerm); // Sincroniza el valor del input con el searchTerm
   }, [searchTerm]);
 
+  // Maneja el cambio en el campo de búsqueda
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newSearchTerm = e.target.value;
-    setInputValue(newSearchTerm);
-    onSearch(newSearchTerm);
+    const value = e.target.value;
+    setInputValue(value);  // Actualizar el estado local del input
+    onSearch(value);  // Llamar la función de búsqueda que se pasa desde el Home
   };
 
+  // Maneja la selección de una sugerencia
   const handleSuggestionClick = (suggestion: string) => {
-    setInputValue(suggestion);
-    onSearch(suggestion);
+    setInputValue(suggestion);  // Establecer el término de búsqueda en el valor de la sugerencia seleccionada
+    onSearch(suggestion);  // Llamar la función de búsqueda con la sugerencia seleccionada
   };
 
   return (
     <nav className="bg-gray-800 text-white p-4">
       <div className="max-w-screen-xl mx-auto flex justify-between items-center">
-        <div className="text-2xl font-bold">eCommerce</div>
+        <a href="/" className="text-2xl font-bold">eCommerce</a>
+        
         {/* Barra de búsqueda */}
         <div className="relative w-1/3">
           <input
             type="text"
-            value={inputValue}
-            onChange={handleSearchChange}
+            value={inputValue} // Vincula el valor del input con el estado local
+            onChange={handleSearchChange} // Llama a la función handleSearchChange al escribir
             placeholder="Buscar productos..."
             className="w-full p-2 rounded text-black"
           />
@@ -66,7 +66,7 @@ const NavBar: React.FC<NavBarProps> = ({
         {/* Navegación y acciones */}
         <div className="flex gap-10">
           <Link to="/">Inicio</Link>
-          <Link to="/products">Productos</Link>
+          <Link to="/profile">Mi Cuenta</Link>
           <Link to="/about">Acerca de</Link>
           <button
             id="user-icon-button"

@@ -19,11 +19,11 @@ type Category = {
 };
 
 const Home: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [searchSuggestions, setSearchSuggestions] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);  // Todos los productos
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);  // Productos filtrados
+  const [categories, setCategories] = useState<Category[]>([]);  // Categorías
+  const [searchProduct, setSearchProduct] = useState<string>("");  // Término de búsqueda
+  const [searchSuggestions, setSearchSuggestions] = useState<Product[]>([]);  // Sugerencias de búsqueda
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -49,26 +49,37 @@ const Home: React.FC = () => {
     fetchData();
   }, []);
 
-  // Manejar clic en el producto
+
   const handleProductClick = (productId: number) => {
     navigate(`/product/${productId}`);
   };
 
   // Filtrar productos por búsqueda
-  const handleSearch = (searchTerm: string) => {
-    setSearchTerm(searchTerm);
-    let filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredProducts(filtered);
-
-    // Filtrar sugerencias
-    let suggestions = products.filter((product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setSearchSuggestions(suggestions);
+  const handleSearch = async (searchProduct: string) => {
+    try {
+      if (!searchProduct.trim()) {
+        // Si el campo está vacío, mostramos todos los productos originales
+        setFilteredProducts(products); // 'products' es tu lista completa de productos iniciales
+        return;
+      }
+  
+      const response = await fetch(
+        `https://commercial-api.vulktech.com/products/search?searchProduct=${searchProduct}`
+      );
+      const data = await response.json();
+  
+      if (data.products && Array.isArray(data.products)) {
+        setFilteredProducts(data.products); // Actualizamos con los productos filtrados
+      } else {
+        console.warn("Formato inesperado en la respuesta de la API:", data);
+        setFilteredProducts([]); // Si no hay productos, dejamos el array vacío
+      }
+    } catch (error) {
+      console.error("Error al buscar productos:", error);
+      setFilteredProducts([]); // Si hay un error, dejamos el array vacío
+    }
   };
-
+  
   // Filtrar productos por categoría
   const handleFilterCategory = (category: string) => {
     let filtered = category === "All" ? products : products.filter((product) => product.category === category);
@@ -87,7 +98,7 @@ const Home: React.FC = () => {
     <div className="font-sans text-gray-700">
       <NavBar
         onSearch={handleSearch}
-        searchTerm={searchTerm}
+        searchTerm={searchProduct}
         searchSuggestions={searchSuggestions}
         onFilterCategory={handleFilterCategory}
         onSortPrice={handleSortPrice}
