@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import NavBar from "../components/NavBar";
 import { useNavigate } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
+/* import { useAuth0 } from "@auth0/auth0-react"; */
 
 type Product = {
   id: number;
@@ -20,7 +20,7 @@ type Category = {
 };
 
 const Home: React.FC = () => {
-  const { loginWithRedirect, isAuthenticated } = useAuth0();
+/*   const { loginWithRedirect, isAuthenticated } = useAuth0(); */
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -52,11 +52,11 @@ const Home: React.FC = () => {
   }, []);
 
   // Este useEffect maneja la autenticación
-  useEffect(() => {
+/*   useEffect(() => {
     if (!isAuthenticated) {
       console.log("No estás autenticado");
     }
-  }, [isAuthenticated]); // Este useEffect solo se ejecutará cuando cambie el estado de autenticación
+  }, [isAuthenticated]); */ // Este useEffect solo se ejecutará cuando cambie el estado de autenticación
 
   const handleProductClick = (productId: number) => {
     navigate(`/product/${productId}`);
@@ -97,7 +97,7 @@ const Home: React.FC = () => {
     setFilteredProducts(sorted);
   };
 
-  return isAuthenticated ? (
+  return (
     <div className="font-sans text-gray-700">
       <NavBar
         onSearch={handleSearch}
@@ -136,13 +136,16 @@ const Home: React.FC = () => {
               </button>
             ))
           ) : (
-            <p>No hay productos disponibles.</p>
+            <div className="text-center">
+              <p className="text-2xl font-bold">No se encontraron productos.</p>
+            </div>
           )}
+          </div>
         </div>
-      </div>
-    </div>
-  ) : (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+    </div> 
+  
+  ) 
+ /*    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <div className="rounded-lg shadow-lg p-12 bg-white">
         <p className="text-blue-300 text-center text-2xl font-bold">No estás autenticado.</p>
         <p className="m-4 text-center"> Inicia sesión para continuar.</p>
@@ -155,8 +158,8 @@ const Home: React.FC = () => {
           </button>
         </div>
       </div>
-    </div>
-  );
+    </div> */
+
 };
 
 export default Home;

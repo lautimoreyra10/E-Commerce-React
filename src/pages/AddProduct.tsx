@@ -4,7 +4,7 @@ interface ProductData {
   name: string;
   description: string;
   price: string;
-  category: string;
+  stock: number;
   imageUrl: string;
 }
 
@@ -13,7 +13,7 @@ export const AddProduct: React.FC = () => {
     name: "",
     description: "",
     price: "",
-    category: "",
+    stock: 0,
     imageUrl: "",
   });
 
@@ -34,17 +34,17 @@ export const AddProduct: React.FC = () => {
       !productData.name ||
       !productData.description ||
       !productData.price ||
-      !productData.category
+      !productData.stock
     ) {
       setMessage("Por favor, completa todos los campos obligatorios.");
       return;
     }
 
-    const token = localStorage.getItem("token");
+  /*   const token = localStorage.getItem("token");
     if (!token) {
       setMessage("Debes iniciar sesión para agregar un producto.");
       return;
-    }
+    } */
 
     try {
       const response = await fetch("https://commercial-api.vulktech.com/products", {
@@ -108,18 +108,18 @@ export const AddProduct: React.FC = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="category">Categoría</label>
+          <label htmlFor="stock">Stock</label>
           <input
-            id="category"
+            id="stock"
             type="text"
-            placeholder="Categoría del producto"
-            value={productData.category}
+            placeholder="stock"
+            value={productData.stock}
             onChange={handleInputChange}
             className="w-full p-2 mb-2 border border-gray-300 rounded"
             required
           />
         </div>
-        <div className="form-group">
+        {/* <div className="form-group">
           <label htmlFor="imageUrl">URL de la Imagen</label>
           <input
             id="imageUrl"
@@ -129,7 +129,7 @@ export const AddProduct: React.FC = () => {
             onChange={handleInputChange}
             className="w-full p-2 mb-2 border border-gray-300 rounded"
           />
-        </div>
+        </div> */}
         <button
           type="submit"
           className="bg-blue-500 text-white p-4 rounded hover:bg-blue-600"

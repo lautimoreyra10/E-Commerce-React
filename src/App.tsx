@@ -6,19 +6,19 @@ import AddProduct from './pages/AddProduct';
 import ProductDetail from './pages/ProductDetail';
 /* import Login from './pages/Login';
  */
-/* import Profile from './pages/Profile'; */
+import Profile from './pages/Profile';
 import Cart from './pages/Cart';
 import AuthLogin from './components/AuthLogin';
-import AuthProfile from './components/AuthProfile';
+/* import AuthProfile from './components/AuthProfile'; */
 
 const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<AuthLogin />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/login" element={<AuthLogin />} />
+        <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<AuthProfile/>} />
+        <Route path="/profile" element={<Profile/>} />
         <Route path= "/add-product" element={<AddProduct />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />

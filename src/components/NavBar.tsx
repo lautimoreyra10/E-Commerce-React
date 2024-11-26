@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth0 } from '@auth0/auth0-react';
+/* import { useAuth0 } from '@auth0/auth0-react'; */
 import { Link } from "react-router-dom";
 
 type NavBarProps = {
@@ -22,15 +22,21 @@ const NavBar: React.FC<NavBarProps> = ({
     setInputValue(searchTerm); // Sincroniza el valor del input con el searchTerm
   }, [searchTerm]);
 
-  const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0(); // Hooks de Auth0
+  /* const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0(); // Hooks de Auth0 */
 
   // Maneja el cambio en el campo de búsqueda
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setInputValue(value);  // Actualizar el estado local del input
-    onSearch(value);  // Llamar a la función de búsqueda que se pasa desde el Home
-  };
-
+      setInputValue(value);  // Actualizar el estado local del input
+      if (value.length >= 4 || value === "") {
+        onSearch(value);  // Llamar a la función de búsqueda con el valor actual
+      }
+}  // Llamar a la función de búsqueda que se pasa desde el Home
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+      if(event.key === 'Enter'){
+        onSearch(inputValue);
+      }
+}
   // Maneja la selección de una sugerencia
   const handleSuggestionClick = (suggestion: string) => {
     setInputValue(suggestion);  // Establecer el término de búsqueda en el valor de la sugerencia seleccionada
@@ -46,6 +52,7 @@ const NavBar: React.FC<NavBarProps> = ({
         {/* Barra de búsqueda */}
         <div className="relative w-1/3">
           <input
+            onKeyDown={handleKeyDown}
             type="text"
             value={inputValue} // Vincula el valor del input con el estado local
             onChange={handleSearchChange} // Llama a la función handleSearchChange al escribir
@@ -74,14 +81,14 @@ const NavBar: React.FC<NavBarProps> = ({
           <Link to="/about">Acerca de</Link>
 
           {/* Lógica de Login/Logout con Auth0 */}
-          {!isAuthenticated ? (
+          {/* {!isAuthenticated ? (
             <button onClick={() => loginWithRedirect()}>Iniciar sesión</button>
           ) : (
             <div>
               <span>Bienvenido, {user?.name}</span>
               <button onClick={() => logout({ returnTo: window.location.origin })}>Cerrar sesión</button>
             </div>
-          )}
+          )} */}
 
           <button
             id="user-icon-button"
