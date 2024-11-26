@@ -20,12 +20,12 @@ type Category = {
 };
 
 const Home: React.FC = () => {
-  const { loginWithRedirect, isAuthenticated } = useAuth0(); // Mueve aquí el uso del hook
-  const [products, setProducts] = useState<Product[]>([]); // Todos los productos
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); // Productos filtrados
-  const [categories, setCategories] = useState<Category[]>([]); // Categorías
-  const [searchProduct, setSearchProduct] = useState<string>(""); // Término de búsqueda
-  const [searchSuggestions, setSearchSuggestions] = useState<Product[]>([]); // Sugerencias de búsqueda
+  const { loginWithRedirect, isAuthenticated } = useAuth0();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [searchProduct, setSearchProduct] = useState<string>("");
+  const [searchSuggestions, setSearchSuggestions] = useState<Product[]>([]);
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -38,18 +38,25 @@ const Home: React.FC = () => {
       const productsData = await productsResponse.json();
       const categoriesData = await categoriesResponse.json();
 
-      setProducts(productsData.productList); // Asignamos los productos al estado
-      setCategories(categoriesData.categoryList); // Asignamos las categorías
-      setFilteredProducts(productsData.productList); // Inicialmente, mostrar todos los productos
+      setProducts(productsData.productList);
+      setCategories(categoriesData.categoryList);
+      setFilteredProducts(productsData.productList);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  // Cargar productos y categorías cuando se monta el componente
+  // Este useEffect carga los datos cuando se monta el componente
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Este useEffect maneja la autenticación
+  useEffect(() => {
+    if (!isAuthenticated) {
+      console.log("No estás autenticado");
+    }
+  }, [isAuthenticated]); // Este useEffect solo se ejecutará cuando cambie el estado de autenticación
 
   const handleProductClick = (productId: number) => {
     navigate(`/product/${productId}`);
@@ -58,7 +65,7 @@ const Home: React.FC = () => {
   const handleSearch = async (searchProduct: string) => {
     try {
       if (!searchProduct.trim()) {
-        setFilteredProducts(products); // Mostrar todos los productos si no hay búsqueda
+        setFilteredProducts(products);
         return;
       }
 
@@ -135,12 +142,18 @@ const Home: React.FC = () => {
       </div>
     </div>
   ) : (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 ">
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <div className="rounded-lg shadow-lg p-12 bg-white">
-      <p className="text-red-500 text-center text-2xl">No estás autenticado.</p> <p className="m-4 text-center"> Inicia sesión para continuar.</p>
-      <div className="text-center">
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => loginWithRedirect()}>Iniciar sesión</button>
-      </div>
+        <p className="text-blue-300 text-center text-2xl font-bold">No estás autenticado.</p>
+        <p className="m-4 text-center"> Inicia sesión para continuar.</p>
+        <div className="text-center">
+          <button
+            className="bg-blue-300 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => loginWithRedirect()}
+          >
+            Iniciar sesión
+          </button>
+        </div>
       </div>
     </div>
   );
