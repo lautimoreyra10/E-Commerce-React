@@ -76,32 +76,34 @@ const ProductDetail = () => {
     <div>
       <NavBar/>
       {product ? (
-        <div className="container mx-auto max-w-screen-lg px-4 py-6">
+        <div className="mt-6 container mx-auto max-w-screen-lg px-4 py-6 text-customText bg-white">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Imagen del Producto */}
             <div className="flex-1">
-              <img
-                src={product.imageUrl}  // Asegúrate de que 'imageUrl' es el campo correcto de la API
-                alt={product.name}
-                className="rounded-lg shadow-lg max-w-4xl object-cover"
-              />
+                <div className=''>
+                  <img
+                    src={product.imageUrl}  // Asegúrate de que 'imageUrl' es el campo correcto de la API
+                    alt={product.name}
+                    className='w-full h-full object-cover rounded-lg'
+                  />
+                </div>
             </div>
 
             {/* Información del Producto */}
             <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
+              <h1 className="text-3xl font-bold mb-4 text-customText">{product.name}</h1>
               <p className="text-gray-600 mb-6 text-xl">{product.description}</p> {/* Descripción */}
-              <p className="text-2xl font-semibold text-blue-500 mb-6">
+              <p className="text-2xl font-semibold text-customPrice mb-6">
                 ${product.price} USD {/* Precio */}
               </p>
-              <p className="font-bold text-xl mb-6">{product.stock} unidades disponibles</p> {/* Stock */}
+              <p className="font-bold text-xl mb-6 text-customText">{product.stock} unidades disponibles</p> {/* Stock */}
               <button
                 onClick={addToCart}
-                className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition w-full"
+                className="px-6 py-3 bg-customText text-white font-bold rounded-lg hover:bg-customPrice transition w-full"
               >
                 Agregar al Carrito
               </button>
-              <button onClick={cartRedirect} className="mt-4 px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition w-full">
+              <button onClick={cartRedirect} className="mt-4 px-6 py-3 bg-customText text-white font-bold rounded-lg hover:bg-customPrice transition w-full">
                 Comprar Ahora
               </button>
             </div>

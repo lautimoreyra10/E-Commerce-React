@@ -81,18 +81,18 @@ const CartPage: React.FC = () => {
                   />
                   <div className="flex-1">
                     <h2 className="font-bold text-lg">{product.name}</h2>
-                    <p className="text-gray-600">{product.price} USD</p>
+                    <p className="text-customPrice font-semibold">{product.price} USD</p>
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => decreaseQuantity(product.id)}
-                        className="px-3 py-1 bg-gray-200 rounded"
+                        className="px-3 py-1 bg-white rounded hover:bg-customBackground"
                       >
                         -
                       </button>
                       <span>{product.quantity}</span>
                       <button
                         onClick={() => increaseQuantity(product.id)}
-                        className="px-3 py-1 bg-gray-200 rounded"
+                        className="px-3 py-1 bg-white rounded hover:bg-customBackground"
                       >
                         +
                       </button>
@@ -100,7 +100,7 @@ const CartPage: React.FC = () => {
                   </div>
                   <button
                     onClick={() => removeItem(product.id)}
-                    className="px-3 py-1 bg-red-500 text-white rounded"
+                    className="px-3 py-1 bg-customWord text-white rounded hover:bg-customPrice transition"
                   >
                     Eliminar
                   </button>
@@ -111,10 +111,10 @@ const CartPage: React.FC = () => {
             {/* Resumen de compra */}
             <div className="bg-white p-6 rounded-lg shadow-md w-full lg:w-1/3">
               <h2 className="font-bold text-xl mb-4">Resumen</h2>
-              <p className="text-gray-600">Total de productos: {totalItems}</p>
-              <p className="text-gray-600 mb-4">Total a pagar: {totalPrice} USD</p>
+              <p className="text-customText">Total de productos: {totalItems}</p>
+              <p className="text-customText mb-4">Total a pagar: {totalPrice} USD</p>
               <button
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg font-bold hover:bg-blue-600 transition"
+                className="w-full px-4 py-2 bg-customText text-white rounded-lg font-bold hover:bg-customPrice transition"
               >
                 Finalizar compra
               </button>

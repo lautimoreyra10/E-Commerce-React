@@ -45,9 +45,9 @@ const NavBar: React.FC<NavBarProps> = ({
 
   // Renderizar el contenido de la navegación
   return (
-    <nav className="bg-gray-800 text-white p-4">
+    <nav className="bg-customBackground text-customText p-4 shadow-md ">
       <div className="max-w-screen-xl mx-auto flex justify-between items-center">
-        <a href="/" className="text-2xl font-bold">eCommerce</a>
+        <a href="/" className="text-customText text-2xl font-bold hover:text-customPrice">eCommerce</a>
         
         {/* Barra de búsqueda */}
         <div className="relative w-1/3">
@@ -57,7 +57,7 @@ const NavBar: React.FC<NavBarProps> = ({
             value={inputValue} // Vincula el valor del input con el estado local
             onChange={handleSearchChange} // Llama a la función handleSearchChange al escribir
             placeholder="Buscar productos..."
-            className="w-full p-2 rounded text-black"
+            className="w-full p-2 rounded text-black outline outline-1 outline-gray-300 focus:outline-2"
           />
           {inputValue && searchSuggestions.length > 0 && (
             <div className="absolute top-full left-0 right-0 bg-white border mt-2 max-h-60 overflow-y-auto z-10 text-black">
@@ -76,9 +76,9 @@ const NavBar: React.FC<NavBarProps> = ({
 
         {/* Navegación y acciones */}
         <div className="flex gap-10">
-          <Link to="/">Inicio</Link>
-          <Link to="/profile">Mi Cuenta</Link>
-          <Link to="/about">Acerca de</Link>
+          <Link className="font-bold text-[#0e3541] hover:text-customPrice" to="/">Inicio</Link>
+          <Link className="font-bold text-[#0e3541] hover:text-customPrice" to="/profile">Mi Cuenta</Link>
+          <Link className="font-bold text-[#0e3541] hover:text-customPrice" to="/add-product">Agregar Producto</Link>
 
           {/* Lógica de Login/Logout con Auth0 */}
           {/* {!isAuthenticated ? (

@@ -10,6 +10,10 @@ module.exports = {
         'cart-bg': '#17171B',
         'cart-hover': '#0A0A0C',
         'cart-tick': '#FF328B',
+        'customText' : '#282d32',
+        'customBackground': '#e7e8e4',
+        'customWord' : '#e45754',
+        'customPrice' : '#2f7c9c',
       },
       keyframes: {
         scaleUp: {
