@@ -1,71 +1,50 @@
-import React, { useState, useEffect } from "react";
-/* import { useAuth0 } from '@auth0/auth0-react'; */
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 type NavBarProps = {
   onSearch: (searchTerm: string) => void;
   searchTerm: string;
-  searchSuggestions: any[];  // Sugerencias de búsqueda
-  onFilterCategory: (category: string) => void;
-  onSortPrice: (order: "asc" | "desc") => void;
-  categories: any[];
+  searchSuggestions: any[];
 };
 
-const NavBar: React.FC<NavBarProps> = ({
-  onSearch,
-  searchTerm,
-  searchSuggestions,
-}) => {
-  const [inputValue, setInputValue] = useState(searchTerm); // Para controlar el valor del input
+const NavBar: React.FC<NavBarProps> = ({ onSearch, searchTerm, searchSuggestions }) => {
+  const [cartItemsCount, setCartItemsCount] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    setInputValue(searchTerm); // Sincroniza el valor del input con el searchTerm
-  }, [searchTerm]);
+    const cartJson = localStorage.getItem("cart");
+    const storedCart = cartJson ? JSON.parse(cartJson) : [];
+    const totalItems = storedCart.reduce((sum: number, item: any) => sum + item.quantity, 0);
+    setCartItemsCount(totalItems);
+  }, []);
 
-  /* const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0(); // Hooks de Auth0 */
-
-  // Maneja el cambio en el campo de búsqueda
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-      setInputValue(value);  // Actualizar el estado local del input
-      if (value.length >= 4 || value === "") {
-        onSearch(value);  // Llamar a la función de búsqueda con el valor actual
-      }
-}  // Llamar a la función de búsqueda que se pasa desde el Home
-    const handleKeyDown = (event: React.KeyboardEvent) => {
-      if(event.key === 'Enter'){
-        onSearch(inputValue);
-      }
-}
-  // Maneja la selección de una sugerencia
-  const handleSuggestionClick = (suggestion: string) => {
-    setInputValue(suggestion);  // Establecer el término de búsqueda en el valor de la sugerencia seleccionada
-    onSearch(suggestion);  // Llamar la función de búsqueda con la sugerencia seleccionada
-  };
-
-  // Renderizar el contenido de la navegación
   return (
-    <nav className="bg-customBackground text-customText p-4 shadow-md ">
-      <div className="max-w-screen-xl mx-auto flex justify-between items-center">
-        <a href="/" className="text-customText text-2xl font-bold hover:text-customPrice">eCommerce</a>
-        
+    <nav className="bg-customBackground text-customText p-4 shadow-md">
+      <div className="max-w-screen-xl mx-auto flex items-center justify-between">
+        {/* Logo responsive */}
+        <Link to="/" className="text-customText text-2xl font-bold hover:text-customPrice">
+          <span className="hidden md:block">eCommerce</span>
+          <span className="block md:hidden">e</span>
+        </Link>
+
         {/* Barra de búsqueda */}
-        <div className="relative w-1/3">
+        <div className="relative w-full md:w-1/3 mx-4">
           <input
-            onKeyDown={handleKeyDown}
             type="text"
-            value={inputValue} // Vincula el valor del input con el estado local
-            onChange={handleSearchChange} // Llama a la función handleSearchChange al escribir
+            value={searchTerm}
+            onChange={(e) => onSearch(e.target.value)}
             placeholder="Buscar productos..."
             className="w-full p-2 rounded text-black outline outline-1 outline-gray-300 focus:outline-2"
           />
-          {inputValue && searchSuggestions.length > 0 && (
+          {searchTerm && searchSuggestions.length > 0 && (
             <div className="absolute top-full left-0 right-0 bg-white border mt-2 max-h-60 overflow-y-auto z-10 text-black">
               {searchSuggestions.map((product) => (
                 <div
                   key={product.id}
                   className="p-2 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSuggestionClick(product.name)} // Actualiza el término de búsqueda al seleccionar una sugerencia
+                  onClick={() => onSearch(product.name)}
                 >
                   {product.name}
                 </div>
@@ -74,41 +53,67 @@ const NavBar: React.FC<NavBarProps> = ({
           )}
         </div>
 
-        {/* Navegación y acciones */}
-        <div className="flex gap-10">
-          <Link className="font-bold text-[#0e3541] hover:text-customPrice" to="/">Inicio</Link>
-          <Link className="font-bold text-[#0e3541] hover:text-customPrice" to="/profile">Mi Cuenta</Link>
-          <Link className="font-bold text-[#0e3541] hover:text-customPrice" to="/add-product">Agregar Producto</Link>
-
-          {/* Lógica de Login/Logout con Auth0 */}
-          {/* {!isAuthenticated ? (
-            <button onClick={() => loginWithRedirect()}>Iniciar sesión</button>
-          ) : (
-            <div>
-              <span>Bienvenido, {user?.name}</span>
-              <button onClick={() => logout({ returnTo: window.location.origin })}>Cerrar sesión</button>
-            </div>
-          )} */}
-
+        {/* Menú hamburguesa */}
+        <div className="md:hidden">
           <button
-            id="user-icon-button"
-            className="user-icon-button"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              margin: 0,
-            }}
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="p-2 text-customText hover:text-customPrice"
           >
-            <i className="fas fa-user"></i>
+            <FontAwesomeIcon icon={faBars} size="lg" />
           </button>
-          <button
-            id="cart-icon"
-            /* onClick={} */
+        </div>
+
+        {/* Menú normal (visible en pantallas grandes) */}
+        <div className="hidden md:flex gap-10">
+          <Link className="font-bold text-[#0e3541] hover:text-customPrice" to="/">
+            Inicio
+          </Link>
+          <Link className="font-bold text-[#0e3541] hover:text-customPrice" to="/profile">
+            Mi Cuenta
+          </Link>
+          <Link className="font-bold text-[#0e3541] hover:text-customPrice" to="/add-product">
+            Agregar Producto
+          </Link>
+        </div>
+      </div>
+
+      {/* Menú desplegable para móviles */}
+      <div
+        className={`fixed top-0 right-0 min-h-3.5/6 w-2/4 max-w-xs bg-customBackground bg-opacity-70 text-customText shadow-md transition-transform transform ${
+          menuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+        style={{
+          transition: "transform 0.5s ease-in-out", // Suavidad en el deslizamiento
+        }}
+      >
+        <button
+          className="absolute top-4 right-4 text-customText hover:text-customPrice"
+          onClick={() => setMenuOpen(false)}
+        >
+          Cerrar
+        </button>
+        <div className="flex flex-col mt-12 p-4">
+          <Link
+            to="/"
+            className="py-2 text-customText hover:text-customPrice border-b border-gray-300"
+            onClick={() => setMenuOpen(false)}
           >
-            <i className="fas fa-cart-plus"></i>
-          </button>
+            Inicio
+          </Link>
+          <Link
+            to="/profile"
+            className="py-2 text-customText hover:text-customPrice border-b border-gray-300"
+            onClick={() => setMenuOpen(false)}
+          >
+            Mi Cuenta
+          </Link>
+          <Link
+            to="/add-product"
+            className="py-2 text-customText hover:text-customPrice"
+            onClick={() => setMenuOpen(false)}
+          >
+            Agregar Producto
+          </Link>
         </div>
       </div>
     </nav>

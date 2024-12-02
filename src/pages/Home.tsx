@@ -83,64 +83,65 @@ const Home: React.FC = () => {
         categories={categories}
       />
       <div className="max-w-screen-xl mx-auto px-4 mt-10 flex justify-between items-center">
-        <div className="flex space-x-4">
-          {/* Categorías */}
-          <div className="relative">
-            <button
-              className="bg-white text-customText px-4 py-2 w-52 cursor-pointer flex items-center justify-between"
-              onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-            >
-              Todas las categorías
-              <span className="ml-2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-customText border-l-transparent border-r-transparent" />
-            </button>
-            {showCategoryDropdown && (
-              <ul className="absolute left-0 top-full w-52 bg-white text-customText mt-1 shadow-lg z-10">
-                <li
-                  className="px-4 py-2 hover:bg-customBackground cursor-pointer"
-                  onClick={() => handleFilterCategory("All")}
-                >
-                  Todas
-                </li>
-                {categories.map((category) => (
-                  <li
-                    key={category.id}
-                    className="px-4 py-2 hover:bg-customBackground cursor-pointer"
-                    onClick={() => handleFilterCategory(category.name)}
-                  >
-                    {category.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+      <div className="hidden md:flex space-x-4">
+  {/* Categorías */}
+  <div className="relative">
+    <button
+      className="bg-white text-customText px-4 py-2 w-52 cursor-pointer flex items-center justify-between"
+      onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+    >
+      Todas las categorías
+      <span className="ml-2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-customText border-l-transparent border-r-transparent" />
+    </button>
+    {showCategoryDropdown && (
+      <ul className="absolute left-0 top-full w-52 bg-white text-customText mt-1 shadow-lg z-10">
+        <li
+          className="px-4 py-2 hover:bg-customBackground cursor-pointer"
+          onClick={() => handleFilterCategory("All")}
+        >
+          Todas
+        </li>
+        {categories.map((category) => (
+          <li
+            key={category.id}
+            className="px-4 py-2 hover:bg-customBackground cursor-pointer"
+            onClick={() => handleFilterCategory(category.name)}
+          >
+            {category.name}
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
 
-          {/* Ordenar por precio */}
-          <div className="relative">
-            <button
-              className="bg-white text-customText px-4 py-2 w-52 cursor-pointer flex items-center justify-between"
-              onClick={() => setShowSortDropdown(!showSortDropdown)}
-            >
-              Ordenar por precio
-              <span className="ml-2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-customText border-l-transparent border-r-transparent" />
-            </button>
-            {showSortDropdown && (
-              <ul className="absolute left-0 top-full w-52 bg-white text-customText mt-1 shadow-lg z-10">
-                <li
-                  className="px-4 py-2 hover:bg-customBackground cursor-pointer"
-                  onClick={() => handleSortPrice("asc")}
-                >
-                  Menor Precio
-                </li>
-                <li
-                  className="px-4 py-2 hover:bg-customBackground cursor-pointer"
-                  onClick={() => handleSortPrice("desc")}
-                >
-                  Mayor Precio
-                </li>
-              </ul>
-            )}
-          </div>
-        </div>
+  {/* Ordenar por precio */}
+  <div className="relative">
+    <button
+      className="bg-white text-customText px-4 py-2 w-52 cursor-pointer flex items-center justify-between"
+      onClick={() => setShowSortDropdown(!showSortDropdown)}
+    >
+      Ordenar por precio
+      <span className="ml-2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-customText border-l-transparent border-r-transparent" />
+    </button>
+    {showSortDropdown && (
+      <ul className="absolute left-0 top-full w-52 bg-white text-customText mt-1 shadow-lg z-10">
+        <li
+          className="px-4 py-2 hover:bg-customBackground cursor-pointer"
+          onClick={() => handleSortPrice("asc")}
+        >
+          Menor Precio
+        </li>
+        <li
+          className="px-4 py-2 hover:bg-customBackground cursor-pointer"
+          onClick={() => handleSortPrice("desc")}
+        >
+          Mayor Precio
+        </li>
+      </ul>
+    )}
+  </div>
+</div>
+
       </div>
       <div className="container mx-auto max-w-screen-xl px-4 mt-10">
         <div className="flex flex-wrap gap-0.75">

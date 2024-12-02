@@ -9,11 +9,13 @@ type Product = {
   quantity: number;
 };
 
-const CartPage: React.FC = () => {
+const Cart: React.FC = () => {
   const [cart, setCart] = useState<Product[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
 
+  const response = fetch("https://commercial-api.vulktech.com/orders/");
+  
   // Cargar carrito desde localStorage al montar el componente
   useEffect(() => {
     const cartJson = localStorage.getItem("cart");
@@ -61,7 +63,7 @@ const CartPage: React.FC = () => {
 
   return (
     <div className="font-sans bg-gray-50 text-gray-800">
-      <NavBar />
+      <NavBar onSearch={() => {}} searchTerm="" searchSuggestions={[]} />
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-6">Carrito de Compras</h1>
 
@@ -128,4 +130,4 @@ const CartPage: React.FC = () => {
   );
 };
 
-export default CartPage;
+export default Cart;
