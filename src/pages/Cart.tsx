@@ -13,8 +13,10 @@ const Cart: React.FC = () => {
   const [cart, setCart] = useState<Product[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const [loading, setLoading] = useState(false); // Estado para gestionar la solicitud
+  const [error, setError] = useState<string | null>(null);
 
-  const response = fetch("https://commercial-api.vulktech.com/orders/");
+  const API_BASE_URL = "https://commercial-api.vulktech.com/orders"; 
   
   // Cargar carrito desde localStorage al montar el componente
   useEffect(() => {
@@ -60,6 +62,40 @@ const Cart: React.FC = () => {
     setTotalPrice(total);
     setTotalItems(items);
   }, [cart]);
+
+  // Crear una nueva orden
+  const createOrder = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const customerId = 1; // Reemplaza con el ID real del cliente autenticado
+      const response = await fetch(`${API_BASE_URL}/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerId,
+          total: totalPrice,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al crear la orden");
+      }
+
+      const data = await response.json();
+      console.log("Orden creada exitosamente:", data);
+      alert("Orden creada con éxito");
+      // Opcional: limpiar carrito tras la orden exitosa
+      updateCart([]);
+    } catch (err) {
+      console.error("Error al crear la orden:", err);
+      setError("Hubo un problema al crear la orden. Por favor, inténtalo de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="font-sans bg-gray-50 text-gray-800">
@@ -117,9 +153,12 @@ const Cart: React.FC = () => {
               <p className="text-customText mb-4">Total a pagar: {totalPrice} USD</p>
               <button
                 className="w-full px-4 py-2 bg-customText text-white rounded-lg font-bold hover:bg-customPrice transition"
+                onClick={createOrder}
+                disabled={loading}
               >
-                Finalizar compra
+                {loading ? "Procesando..." : "Finalizar compra"}
               </button>
+              {error && <p className="text-red-500 mt-2">{error}</p>}
             </div>
           </div>
         ) : (

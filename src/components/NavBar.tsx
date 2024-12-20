@@ -74,6 +74,9 @@ const NavBar: React.FC<NavBarProps> = ({ onSearch, searchTerm, searchSuggestions
           <Link className="font-bold text-[#0e3541] hover:text-customPrice" to="/add-product">
             Agregar Producto
           </Link>
+          <button>
+            <FontAwesomeIcon icon={"shopping-cart"} className="font-bold text-[#0e3541] hover:text-customPrice text-center justify-center align-center" onClick={() => window.location.href = "/cart"}/>
+          </button>
         </div>
       </div>
 
