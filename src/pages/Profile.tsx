@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import {decode} from 'jwt-decode';
 
 interface UserData {
   firstName: string;
@@ -29,12 +30,25 @@ const ProfilePage: React.FC = () => {
   // Función para obtener el perfil del usuario
   const getUserProfile = async () => {
     const token = localStorage.getItem('token');
+    
     if (!token) {
       setRedirect(true);
       return;
     }
 
     try {
+      // Verificar si el token ha expirado
+      const decodedToken: any = decode(token);
+      const expirationDate = decodedToken.exp * 1000; // Convertir a milisegundos
+      const currentDate = new Date().getTime();
+
+      if (currentDate > expirationDate) {
+        localStorage.removeItem('token');
+        setRedirect(true);
+        return;
+      }
+
+      // Si el token es válido, hacemos la petición
       const res = await fetch('https://commercial-api.vulktech.com/users', {
         headers: {
           Authorization: `Bearer ${token}`,

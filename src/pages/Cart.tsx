@@ -15,6 +15,9 @@ const Cart: React.FC = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false); // Estado para gestionar la solicitud
   const [error, setError] = useState<string | null>(null);
+  const [searchSuggestions, setSearchSuggestions] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
   const API_BASE_URL = "https://commercial-api.vulktech.com/orders"; 
   
@@ -96,10 +99,33 @@ const Cart: React.FC = () => {
       setLoading(false);
     }
   };
+const handleSearch = async (searchTerm: string) => {
+  
+    if (searchTerm.length > 0) {
+      try {
+        const response = await fetch(`https://commercial-api.vulktech.com/products?search=${searchTerm}`);
+        console.log(searchTerm);
+        const data = await response.json();
+        setSearchSuggestions(data.productList); // Actualiza las sugerencias de búsqueda
+  
+        // Actualiza la lista de productos filtrados según el término de búsqueda
+        setFilteredProducts(data.productList);
+      } catch (error) {
+        console.error("Error al buscar productos:", error);
+      }
+    } else {
+      setSearchSuggestions([]);
+      setFilteredProducts(products);
+    }
+};
 
   return (
     <div className="font-sans bg-gray-50 text-gray-800">
-      <NavBar onSearch={() => {}} searchTerm="" searchSuggestions={[]} />
+      <NavBar 
+        onSearch={handleSearch}
+        searchTerm="" 
+        searchSuggestions={searchSuggestions} 
+        />
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-6">Carrito de Compras</h1>
 

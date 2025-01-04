@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import NavBar from '../components/NavBar';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');

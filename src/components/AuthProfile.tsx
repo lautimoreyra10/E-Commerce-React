@@ -15,7 +15,7 @@ const AuthProfile = () => {
       <h2 className="text-2xl font-bold">{user?.name}</h2>
       <p className="text-gray-700">{user?.email}</p>
       <button
-        onClick={() => logout({ returnTo: window.location.origin })}
+        onClick={() => logout({ returnToUrl: window.location.origin })}
         className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4"
       >
         Cerrar sesión

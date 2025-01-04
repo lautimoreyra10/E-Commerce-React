@@ -51,6 +51,9 @@ const Home: React.FC = () => {
     fetchData();
   }, []);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchProduct(e.target.value);
+  };
   const handleProductClick = (productId: number) => {
     navigate(`/product/${productId}`);
   };
@@ -71,16 +74,35 @@ const Home: React.FC = () => {
     setFilteredProducts(sorted);
     setShowSortDropdown(false);
   };
+  const handleSearch = async (searchTerm: string) => {
+    if (searchTerm.length > 0) {
+      try {
+        const response = await fetch(`https://commercial-api.vulktech.com/products?search=${searchTerm}`);
+        console.log(searchTerm);
+        const data = await response.json();
+        setSearchSuggestions(data.productList); // Actualiza las sugerencias de búsqueda
+  
+        // Actualiza la lista de productos filtrados según el término de búsqueda
+        setFilteredProducts(data.productList);
+      } catch (error) {
+        console.error("Error al buscar productos:", error);
+      }
+    } else {
+      setSearchSuggestions([]);
+      setFilteredProducts(products);
+    }
+  };
 
   return (
     <div className="font-sans text-customText bg-white">
       <NavBar
-        onSearch={() => {}}
+        onSearch={handleSearch}
         searchTerm={searchProduct}
         searchSuggestions={searchSuggestions}
         onFilterCategory={handleFilterCategory}
         onSortPrice={handleSortPrice}
         categories={categories}
+        onInputChange={handleInputChange}
       />
       <div className="max-w-screen-xl mx-auto px-4 mt-10 flex justify-between items-center">
       <div className="hidden md:flex space-x-4">

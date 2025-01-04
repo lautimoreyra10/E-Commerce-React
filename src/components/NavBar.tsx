@@ -1,22 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
+
+type Category = {
+  id: number;
+  name: string;
+};
 
 type NavBarProps = {
   onSearch: (searchTerm: string) => void;
   searchTerm: string;
   searchSuggestions: any[];
+  onFilterCategory: (category: string) => void;
+  onSortPrice: (order: "asc" | "desc") => void;
+  categories: Category[];
+  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-const NavBar: React.FC<NavBarProps> = ({ onSearch, searchTerm, searchSuggestions }) => {
+const NavBar: React.FC<NavBarProps> = ({
+  onSearch,
+  searchTerm,
+  searchSuggestions,
+  onInputChange,
+}) => {
   const [cartItemsCount, setCartItemsCount] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const cartJson = localStorage.getItem("cart");
     const storedCart = cartJson ? JSON.parse(cartJson) : [];
-    const totalItems = storedCart.reduce((sum: number, item: any) => sum + item.quantity, 0);
+    const totalItems = storedCart.reduce(
+      (sum: number, item: any) => sum + item.quantity,
+      0
+    );
     setCartItemsCount(totalItems);
   }, []);
 
@@ -34,7 +51,12 @@ const NavBar: React.FC<NavBarProps> = ({ onSearch, searchTerm, searchSuggestions
           <input
             type="text"
             value={searchTerm}
-            onChange={(e) => onSearch(e.target.value)}
+            onChange={(e) => onInputChange(e)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                onSearch(searchTerm);
+              }
+            }}
             placeholder="Buscar productos..."
             className="w-full p-2 rounded text-black outline outline-1 outline-gray-300 focus:outline-2"
           />
@@ -74,8 +96,13 @@ const NavBar: React.FC<NavBarProps> = ({ onSearch, searchTerm, searchSuggestions
           <Link className="font-bold text-[#0e3541] hover:text-customPrice" to="/add-product">
             Agregar Producto
           </Link>
-          <button>
-            <FontAwesomeIcon icon={"shopping-cart"} className="font-bold text-[#0e3541] hover:text-customPrice text-center justify-center align-center" onClick={() => window.location.href = "/cart"}/>
+          <button onClick={() => window.location.href = "/cart"} className="relative">
+            <FontAwesomeIcon icon={faShoppingCart} className="font-bold text-[#0e3541] hover:text-customPrice" />
+            {cartItemsCount > 0 && (
+              <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-2">
+                {cartItemsCount}
+              </span>
+            )}
           </button>
         </div>
       </div>
