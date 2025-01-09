@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {decode} from 'jwt-decode';
+import jwt_decode from 'jwt-decode';
+import { useAuth0 } from "@auth0/auth0-react";
 
 interface UserData {
   firstName: string;
@@ -13,8 +14,7 @@ interface UserData {
 }
 
 const ProfilePage: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [message, setMessage] = useState<string>('');
+  const { user, isAuthenticated, isLoading, logout } = useAuth0();
   const [userData, setUserData] = useState<UserData>({
     firstName: '',
     lastName: '',
@@ -25,52 +25,40 @@ const ProfilePage: React.FC = () => {
     imageUrl: '',
     role: '',
   });
-  const [redirect, setRedirect] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [message, setMessage] = useState<string>('');
 
-  // Función para obtener el perfil del usuario
+  // Simula cargar los datos adicionales del usuario desde tu API
   const getUserProfile = async () => {
     const token = localStorage.getItem('token');
-    
-    if (!token) {
-      setRedirect(true);
-      return;
-    }
+    if (!token) return;
 
     try {
-      // Verificar si el token ha expirado
-      const decodedToken: any = decode(token);
-      const expirationDate = decodedToken.exp * 1000; // Convertir a milisegundos
-      const currentDate = new Date().getTime();
-
-      if (currentDate > expirationDate) {
-        localStorage.removeItem('token');
-        setRedirect(true);
-        return;
-      }
-
-      // Si el token es válido, hacemos la petición
       const res = await fetch('https://commercial-api.vulktech.com/users', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      if (!res.ok) throw new Error('Token inválido o expirado');
-
+      if (!res.ok) throw new Error('Error al obtener el perfil del usuario');
       const data = await res.json();
       setUserData(data);
-      setLoading(false);
     } catch (err) {
       console.error(err);
       localStorage.removeItem('token');
-      setRedirect(true);
     }
   };
 
-  // Llama a la función para obtener los datos del usuario al montar el componente
   useEffect(() => {
-    getUserProfile();
-  }, []);
+    if (isAuthenticated) {
+      setUserData({
+        ...userData,
+        email: user?.email || '',
+        imageUrl: user?.picture || '',
+      });
+      getUserProfile();
+      setLoading(false);
+    }
+  }, [isAuthenticated, user]);
 
   const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,9 +75,6 @@ const ProfilePage: React.FC = () => {
 
       if (res.ok) {
         setMessage('Perfil actualizado con éxito');
-        setTimeout(() => {
-          window.location.href = '/add-product'; // Redirige a otra página después de 5 segundos
-        }, 5000);
       } else {
         setMessage(`Error al actualizar el perfil: ${await res.text()}`);
       }
@@ -98,18 +83,14 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  if (redirect) {
-    // Si el token no está presente o la autenticación falla, redirige
-    window.location.href = '/login';
-    return null; // No renderiza nada mientras redirige
+  if (isLoading || loading) {
+    return <div>Cargando Perfil...</div>;
   }
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
       <h1 className="text-center text-2xl mb-5">Perfil del Usuario</h1>
-      {loading ? (
-        <div>Cargando Perfil...</div>
-      ) : (
+      {isAuthenticated ? (
         <form className="grid grid-cols-2 gap-5" id="profile-form" onSubmit={handleSaveChanges}>
           <div className="flex flex-col mb-3">
             <label className="text-sm mb-1 text-gray-700">Nombre</label>
@@ -119,6 +100,7 @@ const ProfilePage: React.FC = () => {
               value={userData.firstName}
               className="form-input"
               placeholder="Nombre"
+              onChange={(e) => setUserData({ ...userData, firstName: e.target.value })}
             />
           </div>
 
@@ -130,6 +112,7 @@ const ProfilePage: React.FC = () => {
               value={userData.lastName}
               className="form-input"
               placeholder="Apellido"
+              onChange={(e) => setUserData({ ...userData, lastName: e.target.value })}
             />
           </div>
 
@@ -153,6 +136,7 @@ const ProfilePage: React.FC = () => {
               value={userData.address}
               className="form-input"
               placeholder="Dirección"
+              onChange={(e) => setUserData({ ...userData, address: e.target.value })}
             />
           </div>
 
@@ -164,6 +148,7 @@ const ProfilePage: React.FC = () => {
               value={userData.document}
               className="form-input"
               placeholder="Documento de Identidad"
+              onChange={(e) => setUserData({ ...userData, document: e.target.value })}
             />
           </div>
 
@@ -175,6 +160,7 @@ const ProfilePage: React.FC = () => {
               value={userData.card}
               className="form-input"
               placeholder="Número de Tarjeta"
+              onChange={(e) => setUserData({ ...userData, card: e.target.value })}
             />
           </div>
 
@@ -186,6 +172,7 @@ const ProfilePage: React.FC = () => {
               value={userData.imageUrl}
               className="form-input"
               placeholder="URL de Imagen de Perfil"
+              onChange={(e) => setUserData({ ...userData, imageUrl: e.target.value })}
             />
             {userData.imageUrl && (
               <img
@@ -195,16 +182,14 @@ const ProfilePage: React.FC = () => {
               />
             )}
           </div>
-
-          <div className="flex flex-col mb-3">
-            <label className="text-sm mb-1 text-gray-700">Subir imagen de perfil</label>
-            <input type="file" accept="image/*" id="image-upload" />
-          </div>
-
-          <button type="submit" className="save-button" id="submit-btn">
-            Guardar Cambios
-          </button>
+            <div className='flex flex-col mb-3' id="button-container">
+              <button type="submit" className="save-button hover:text-green-500" id="submit-btn">
+                Guardar Cambios
+              </button>
+            </div>
         </form>
+      ) : (
+        <p>No estás autenticado.</p>
       )}
 
       {message && <p className="text-center text-green-600 mt-4">{message}</p>}
