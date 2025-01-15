@@ -12,7 +12,7 @@ interface UserData {
 
 const ProfilePage: React.FC = () => {
   const { user, isAuthenticated, isLoading, logout } = useAuth0();
-  const [userData, setUserData] = useState<UserData | null>({name: '', email: '', id: 1});
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [message, setMessage] = useState<string>('');
   
@@ -134,6 +134,7 @@ const ProfilePage: React.FC = () => {
         )
       ) : (
         <p>No estás autenticado.</p>
+        
       )}
 
       {message && <p className="text-center text-green-600 mt-4">{message}</p>}

@@ -60,6 +60,34 @@ const ProductDetail = () => {
       onClose: () => (window.location.href = '/cart'),
     });
   };
+  const deleteProduct = () => {
+    if (!product) return;
+  
+    const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este producto?');
+    if (!confirmDelete) return;
+  
+    fetch(`https://commercial-api.vulktech.com/products/${product.id}`, {
+      method: 'DELETE',
+    })
+      .then(response => {
+        if (!response.ok) {
+          // Depuración de la respuesta
+          return response.json().then(err => {
+            console.error('Error al eliminar:', err);
+            throw new Error('Error al eliminar el producto');
+          });
+        }
+        toast.success('¡Producto eliminado con éxito!');
+        // Redireccionar después de eliminar
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 2000); // Espera un poco antes de redireccionar
+      })
+      .catch((err) => {
+        console.error('Error al intentar eliminar el producto:', err);
+        toast.error('Error al eliminar el producto');
+      });
+  };
 
   if (loading) {
     return <div>Cargando...</div>;
@@ -98,6 +126,12 @@ const ProductDetail = () => {
                 className="mt-4 px-6 py-3 bg-customText text-white font-bold rounded-lg hover:bg-customPrice transition w-full"
               >
                 Comprar Ahora
+              </button>
+              <button
+                onClick={deleteProduct}
+                className="px-6 py-3 mt-4 bg-customText text-white font-bold rounded-lg hover:bg-customPrice transition w-full"
+              >
+                Borrar Producto
               </button>
             </div>
           </div>

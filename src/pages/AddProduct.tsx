@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NavBar from "../components/NavBar";
@@ -9,6 +9,12 @@ interface ProductData {
   price: string;
   stock: number;
   imageUrl: string;
+  categoryId: number;
+}
+
+interface Category {
+  id: number;
+  name: string;
 }
 
 export const AddProduct: React.FC = () => {
@@ -18,33 +24,71 @@ export const AddProduct: React.FC = () => {
     price: "",
     stock: 1,
     imageUrl: "",
+    categoryId: 0,  // valor inicial 0, lo que indica que no se ha seleccionado
+  });
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryError, setCategoryError] = useState<string>("");
+  const [formErrors, setFormErrors] = useState<any>({
+    name: "",
+    description: "",
+    price: "",
+    stock: "",
+    categoryId: "",
   });
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("https://commercial-api.vulktech.com/categories");
+        const data = await res.json();
+        setCategories(data.categoryList);
+      } catch (err) {
+        toast.error("Error al cargar las categorías.");
+      }
+    };
+    fetchCategories();
+  }, []);
+
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { id, value } = e.target;
-    if (id === "stock") {
-      const stockValue = parseInt(value, 10);
-      if (stockValue < 0) {
-        setProductData({ ...productData, stock: 0 });
-        return;
-      }
+
+    if (id === "categoryId" && value === "") {
+      setCategoryError("Este campo es requerido");
+    } else {
+      setCategoryError("");
     }
-    setProductData({ ...productData, [id]: value });
+
+    setFormErrors({
+      ...formErrors,
+      [id]: value.trim() === "" ? "Este campo es obligatorio" : "",
+    });
+
+    if (id === "categoryId") {
+      setProductData({ ...productData, categoryId: Number(value) });
+    } else if (id === "price" || id === "stock") {
+      setProductData({ ...productData, [id]: Number(value) });
+    } else {
+      setProductData({ ...productData, [id]: value });
+    }
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validación básica
-    if (
-      !productData.name ||
-      !productData.description ||
-      !productData.price ||
-      !productData.stock
-    ) {
-      toast.error("Por favor, completa todos los campos obligatorios."); // Notificación de error
+    // Validación de todos los campos
+    const errors: any = {};
+
+    if (!productData.name) errors.name = "El nombre del producto es obligatorio";
+    if (!productData.description) errors.description = "La descripción es obligatoria";
+    if (!productData.price) errors.price = "El precio es obligatorio";
+    if (productData.stock <= 0) errors.stock = "El stock debe ser mayor a 0";
+    if (!productData.categoryId) errors.categoryId = "La categoría es obligatoria";
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      toast.error("Por favor, completa todos los campos obligatorios.");
       return;
     }
 
@@ -54,18 +98,26 @@ export const AddProduct: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(productData),
+        body: JSON.stringify(productData),  // El categoryId ya está en el objeto productData
       });
 
       if (response.ok) {
-        toast.success("Producto agregado con éxito 🎉"); // Notificación de éxito
+        toast.success("Producto agregado con éxito 🎉");
         setProductData({
           name: "",
           description: "",
           price: "",
           stock: 1,
           imageUrl: "",
-        }); // Resetea el formulario
+          categoryId: 0,
+        });
+        setFormErrors({
+          name: "",
+          description: "",
+          price: "",
+          stock: "",
+          categoryId: "",
+        });
         window.location.href = "/";
       } else {
         const error = await response.json();
@@ -87,57 +139,90 @@ export const AddProduct: React.FC = () => {
           id="addProductForm"
           onSubmit={handleSubmit}
         >
-          <div className="form-group">
-            <input
-              id="name"
-              type="text"
-              placeholder="Nombre del producto"
-              value={productData.name}
-              onChange={handleInputChange}
-              className="w-full p-2 mb-6 mt-6 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <input
-              id="description"
-              placeholder="Descripción del producto"
-              value={productData.description}
-              onChange={handleInputChange}
-              className=" p-2 mb-6 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <input
-              id="price"
-              type="number"
-              placeholder="Precio del producto"
-              value={productData.price}
-              onChange={handleInputChange}
-              className=" p-2 mb-6 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <h2 className="mb-2">Stock</h2>
-            <input
-              id="stock"
-              type="number"
-              placeholder="Stock"
-              value={productData.stock}
-              onChange={handleInputChange}
-              className="p-2 mb-6 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div className="flex justify-center items-center text-center">
-            <button
-              type="submit"
-              className="bg-customText text-white p-4 rounded hover:bg-customPrice mt-6"
-            >
-              Publicar Producto
-            </button>
+          <div className="w-full max-w-md flex flex-col items-start space-y-4">
+            <div className="form-group w-full">
+              <label htmlFor="categoryId" className="block font-medium text-left">Categoría</label>
+              <select
+                id="categoryId"
+                value={productData.categoryId}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              >
+                <option value="">Selecciona una categoría</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+              {categoryError && <span className="text-red-500 text-sm">{categoryError}</span>}
+              {formErrors.categoryId && <span className="text-red-500 text-sm">{formErrors.categoryId}</span>}
+            </div>
+
+            <div className="form-group w-full">
+              <label htmlFor="name" className="block font-medium text-left">Nombre del producto</label>
+              <input
+                id="name"
+                type="text"
+                placeholder="Nombre del producto"
+                value={productData.name}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+              {formErrors.name && <span className="text-red-500 text-sm">{formErrors.name}</span>}
+            </div>
+
+            <div className="form-group w-full">
+              <label htmlFor="description" className="block font-medium text-left">Descripción</label>
+              <textarea
+                id="description"
+                placeholder="Descripción del producto"
+                value={productData.description}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+              {formErrors.description && <span className="text-red-500 text-sm">{formErrors.description}</span>}
+            </div>
+
+            <div className="form-group w-full">
+              <label htmlFor="price" className="block font-medium text-left">Precio</label>
+              <input
+                id="price"
+                type="number"
+                placeholder="Precio del producto"
+                value={productData.price}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+              {formErrors.price && <span className="text-red-500 text-sm">{formErrors.price}</span>}
+            </div>
+
+            <div className="form-group w-full">
+              <label htmlFor="stock" className="block font-medium text-left">Stock</label>
+              <input
+                id="stock"
+                type="number"
+                placeholder="Stock"
+                value={productData.stock}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+              {formErrors.stock && <span className="text-red-500 text-sm">{formErrors.stock}</span>}
+            </div>
+
+            <div className="w-full flex justify-center items-center">
+              <button
+                type="submit"
+                className="bg-customText text-white w-full py-3 rounded hover:bg-customPrice mt-6"
+              >
+                Publicar Producto
+              </button>
+            </div>
           </div>
         </form>
       </section>
