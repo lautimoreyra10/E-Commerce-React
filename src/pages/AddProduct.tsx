@@ -2,6 +2,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NavBar from "../components/NavBar";
+import {useNavigate} from 'react-router-dom';
 
 interface ProductData {
   name: string;
@@ -24,7 +25,7 @@ export const AddProduct: React.FC = () => {
     price: "",
     stock: 1,
     imageUrl: "",
-    categoryId: 0,  // valor inicial 0, lo que indica que no se ha seleccionado
+    categoryId: 0,
   });
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryError, setCategoryError] = useState<string>("");
@@ -35,7 +36,6 @@ export const AddProduct: React.FC = () => {
     stock: "",
     categoryId: "",
   });
-
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -130,7 +130,7 @@ export const AddProduct: React.FC = () => {
 
   return (
     <div>
-      <NavBar />
+      <NavBar  {...{ onSearch: () => {}, searchTerm: '', searchSuggestions: [], onFilterCategory: () => {}, onSortPrice: () => {}, categories: [], onInputChange: () => {} }} />
       <ToastContainer position="top-right" autoClose={3000} />
       <section className="w-full max-h-full p-4 bg-white">
         <h1 className="text-3xl font-bold p-4 text-center text-customText">Agregar Producto</h1>
@@ -167,6 +167,20 @@ export const AddProduct: React.FC = () => {
                 type="text"
                 placeholder="Nombre del producto"
                 value={productData.name}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+              {formErrors.name && <span className="text-red-500 text-sm">{formErrors.name}</span>}
+            </div>
+
+            <div className="form-group w-full">
+              <label htmlFor="imageUrl" className="block font-medium text-left">Imagen del producto</label>
+              <input
+                id="imageUrl"
+                type="text"
+                placeholder="Imagen del producto"
+                value={productData.imageUrl}
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded"
                 required

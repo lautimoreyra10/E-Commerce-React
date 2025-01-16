@@ -99,7 +99,7 @@ const ProductDetail = () => {
 
   return (
     <div>
-      <NavBar />
+      <NavBar {...{ onSearch: () => {}, searchTerm: '', searchSuggestions: [], onFilterCategory: () => {}, onSortPrice: () => {}, categories: [], onInputChange: () => {} }} />
       <ToastContainer position="top-right" autoClose={3000} />
       {product && (
         <div className="mt-6 container mx-auto max-w-screen-lg px-4 py-6 text-customText bg-white">
