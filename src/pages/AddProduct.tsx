@@ -2,14 +2,13 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NavBar from "../components/NavBar";
-import {useNavigate} from 'react-router-dom';
 
 interface ProductData {
   name: string;
   description: string;
   price: string;
   stock: number;
-  imageUrl: string;
+  Url_image: string;
   categoryId: number;
 }
 
@@ -24,7 +23,7 @@ export const AddProduct: React.FC = () => {
     description: "",
     price: "",
     stock: 1,
-    imageUrl: "",
+    Url_image: "",
     categoryId: 0,
   });
   const [categories, setCategories] = useState<Category[]>([]);
@@ -108,7 +107,7 @@ export const AddProduct: React.FC = () => {
           description: "",
           price: "",
           stock: 1,
-          imageUrl: "",
+          Url_image: "",
           categoryId: 0,
         });
         setFormErrors({
@@ -175,12 +174,12 @@ export const AddProduct: React.FC = () => {
             </div>
 
             <div className="form-group w-full">
-              <label htmlFor="imageUrl" className="block font-medium text-left">Imagen del producto</label>
+              <label htmlFor="Url_image" className="block font-medium text-left">Imagen del producto</label>
               <input
-                id="imageUrl"
+                id="Url_image"
                 type="text"
                 placeholder="Imagen del producto"
-                value={productData.imageUrl}
+                value={productData.Url_image}
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded"
                 required

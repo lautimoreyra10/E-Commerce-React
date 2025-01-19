@@ -27,7 +27,8 @@ const NavBar: React.FC<NavBarProps> = ({
   const [cartItemsCount, setCartItemsCount] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
+  // Actualizar la cantidad de productos del carrito cuando cambien
+  const updateCartItemsCount = () => {
     const cartJson = localStorage.getItem("cart");
     const storedCart = cartJson ? JSON.parse(cartJson) : [];
     const totalItems = storedCart.reduce(
@@ -35,6 +36,19 @@ const NavBar: React.FC<NavBarProps> = ({
       0
     );
     setCartItemsCount(totalItems);
+  };
+
+  // useEffect para actualizar la cantidad al montar el componente
+  useEffect(() => {
+    updateCartItemsCount();
+
+    // Agregar un listener para actualizar la cantidad cuando cambie el carrito en localStorage
+    const handleStorageChange = () => updateCartItemsCount();
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   return (
@@ -109,7 +123,7 @@ const NavBar: React.FC<NavBarProps> = ({
 
       {/* Menú desplegable para móviles */}
       <div
-        className={`fixed top-0 right-0 min-h-3.5/6 w-2/4 max-w-xs bg-customBackground bg-opacity-70 text-customText shadow-md transition-transform transform ${
+        className={`fixed top-0 right-0 min-h-3.5/6 w-2/4 max-w-xs bg-customBackground bg-opacity-90 text-customText shadow-md transition-transform transform ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
         style={{

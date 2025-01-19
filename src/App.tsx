@@ -11,6 +11,7 @@ import Cart from './pages/Cart';
 import AuthLogin from './components/AuthLogin';
 /* import AuthProfile from './components/AuthProfile'; */
 
+
 const App: React.FC = () => {
   return (
     <Router>

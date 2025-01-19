@@ -12,6 +12,7 @@ module.exports = {
         'cart-tick': '#FF328B',
         'customText' : '#282d32',
         'customBackground': '#e7e8e4',
+        'secondary-Bg': '#717f8e',
         'customWord' : '#e45754',
         'customPrice' : '#2f7c9c',
       },

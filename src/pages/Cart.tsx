@@ -70,23 +70,33 @@ const Cart: React.FC = () => {
   const createOrder = async () => {
     setLoading(true);
     setError(null);
+  
     try {
       const customerId = 1; // Reemplaza con el ID real del cliente autenticado
-      const response = await fetch(`${API_BASE_URL}/orders`, {
+      const orderStatus = "Pending"; // Puedes cambiar este valor según el estado que quieras definir
+      const orderProduct = cart.map((product) => ({
+        productId: product.id,
+        quantity: product.quantity,
+        price: product.price,
+      }));
+  
+      const response = await fetch(`${API_BASE_URL}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           customerId,
-          total: totalPrice,
+          orderId: 0, // Puede ser autogenerado por tu backend
+          orderStatus,
+          orderProduct,
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error("Error al crear la orden");
       }
-
+  
       const data = await response.json();
       console.log("Orden creada exitosamente:", data);
       alert("Orden creada con éxito");
@@ -120,7 +130,7 @@ const handleSearch = async (searchTerm: string) => {
 };
 
   return (
-    <div className="font-sans bg-gray-50 text-gray-800">
+    <div className="font-sans text-gray-800">
       <NavBar 
         onSearch={handleSearch}
         searchTerm="" 

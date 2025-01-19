@@ -5,7 +5,6 @@ import './styles/index.css'
 import App from './App.tsx'
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
-
 // Agrega los íconos necesarios a la librería
 library.add(faCartShopping);
 const domain = import.meta.env.VITE_AUTH0_DOMAIN || "";
