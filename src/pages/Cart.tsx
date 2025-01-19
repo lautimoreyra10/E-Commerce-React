@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import NavBar from "../components/NavBar";
 
 type Product = {
@@ -73,7 +74,6 @@ const Cart: React.FC = () => {
   
     try {
       const customerId = 1; // Reemplaza con el ID real del cliente autenticado
-      const orderStatus = "Pending"; // Puedes cambiar este valor según el estado que quieras definir
       const orderProduct = cart.map((product) => ({
         productId: product.id,
         quantity: product.quantity,
@@ -86,10 +86,8 @@ const Cart: React.FC = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          customerId,
-          orderId: 0, // Puede ser autogenerado por tu backend
-          orderStatus,
-          orderProduct,
+          customerId, // El ID del cliente que hace la compra
+          orderProduct, // La lista de productos
         }),
       });
   
@@ -98,13 +96,15 @@ const Cart: React.FC = () => {
       }
   
       const data = await response.json();
-      console.log("Orden creada exitosamente:", data);
-      alert("Orden creada con éxito");
+      toast.success(
+        data
+          ? "Orden creada exitosamente"
+          : "Error en la creación de la orden"
+      );
       // Opcional: limpiar carrito tras la orden exitosa
       updateCart([]);
     } catch (err) {
-      console.error("Error al crear la orden:", err);
-      setError("Hubo un problema al crear la orden. Por favor, inténtalo de nuevo.");
+      toast.error("Error al crear la orden");
     } finally {
       setLoading(false);
     }

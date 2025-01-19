@@ -16,7 +16,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const maxDescriptionLength = 100; // Número máximo de caracteres para mostrar inicialmente
+  const maxDescriptionLength = 50; // Número máximo de caracteres para mostrar inicialmente
 
   const imageUrl = product.image || "/path/to/default-image.jpg"; // Imagen predeterminada
   const altText = product.title || product.name || "Imagen del producto"; // Texto alternativo por defecto
