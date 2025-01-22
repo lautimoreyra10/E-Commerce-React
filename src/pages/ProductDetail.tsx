@@ -30,6 +30,7 @@ const ProductDetail = () => {
         })
         .then((data) => {
           setProduct(data.product);
+          console.log(data?.product?.url_image || "No image available");
           setLoading(false);
         })
         .catch(() => {
@@ -151,7 +152,7 @@ const ProductDetail = () => {
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="flex-1">
               <img
-                src={product.imageUrl}
+                src={product.url_image}
                 alt={product.name}
                 className="w-full h-full object-cover rounded-lg"
               />
