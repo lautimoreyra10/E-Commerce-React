@@ -7,7 +7,7 @@ type Product = {
   id: number;
   name: string;
   price: number;
-  imageUrl: string;
+  url_image: string;
   quantity: number;
   stock: number;
 };
@@ -158,7 +158,7 @@ const handleSearch = async (searchTerm: string) => {
                   className="border p-4 rounded-lg shadow-md flex items-center gap-4 mb-4"
                 >
                   <img
-                    src={product.imageUrl}
+                    src={product.url_image}
                     alt={product.name}
                     className="w-20 h-20 object-cover rounded-lg"
                   />
