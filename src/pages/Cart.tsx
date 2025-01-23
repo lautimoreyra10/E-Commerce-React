@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import NavBar from "../components/NavBar";
 
 type Product = {
@@ -8,6 +9,7 @@ type Product = {
   price: number;
   imageUrl: string;
   quantity: number;
+  stock: number;
 };
 
 const Cart: React.FC = () => {
@@ -37,9 +39,16 @@ const Cart: React.FC = () => {
 
   // Aumentar cantidad de un producto
   const increaseQuantity = (productId: number) => {
-    const newCart = cart.map((item) =>
-      item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
-    );
+    const newCart = cart.map((item) => {
+      if (item.id === productId) {
+        if (item.quantity < item.stock) {
+          return { ...item, quantity: item.quantity + 1 };
+        } else {
+          toast.error(`No hay más stock disponible para ${item.name}`);
+        }
+      }
+      return item;
+    });
     updateCart(newCart);
   };
 
@@ -194,7 +203,7 @@ const handleSearch = async (searchTerm: string) => {
               >
                 {loading ? "Procesando..." : "Finalizar compra"}
               </button>
-              {error && <p className="text-red-500 mt-2">{error}</p>}
+              <ToastContainer/>
             </div>
           </div>
         ) : (
