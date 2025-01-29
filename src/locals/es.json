@@ -1,0 +1,22 @@
+{
+  "addStore": {
+    "title": "Agregar Tienda",
+    "storeName": "Nombre de la tienda",
+    "storeNamePlaceholder": "Escribe el nombre de la tienda",
+    "secondaryColour": "Color Secundario",
+    "submit": "Publicar Tienda"
+  },
+  "errors": {
+    "required": "Este campo es obligatorio",
+    "storeName": "El nombre de la tienda es obligatorio",
+    "logoUrl": "La imagen de la tienda es obligatoria",
+    "primaryColour": "El color primario es obligatorio",
+    "secondaryColour": "El color secundario es obligatorio",
+    "completeAllFields": "Por favor, completa todos los campos obligatorios.",
+    "apiError": "Error en la API",
+    "connectionError": "Error en la conexión"
+  },
+  "success": {
+    "storeAdded": "Tienda agregada con éxito 🎉"
+  }
+}

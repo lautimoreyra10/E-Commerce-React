@@ -50,9 +50,20 @@ const ProfilePage: React.FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       getUserProfile();
+      
+      // Redireccionar después de 3 a 5 segundos si no se carga el perfil
+      const timer = setTimeout(() => {
+        if (!userData) {
+          navigate('/login'); // Redirige al login si no hay perfil después de 3 segundos
+        }
+      }, 5000); // 5000 ms = 5 segundos
+
       setLoading(false);
+
+      // Limpiar el temporizador cuando se desmonta el componente
+      return () => clearTimeout(timer);
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, userData, navigate]);
 
   const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,7 +89,7 @@ const ProfilePage: React.FC = () => {
   };
 
   if (isLoading || loading) {
-    return <div>Cargando Perfil...</div>;
+    return <div className='text-center flex-wrap'>Cargando Perfil...</div>;
   }
 
   return (
@@ -130,11 +141,9 @@ const ProfilePage: React.FC = () => {
           </form>
         ) : (
           <p>No se encontró el usuario.</p>
-
         )
       ) : (
         <p>No estás autenticado.</p>
-        
       )}
 
       {message && <p className="text-center text-green-600 mt-4">{message}</p>}

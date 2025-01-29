@@ -1,0 +1,22 @@
+{
+  "addStore": {
+    "title": "Add Store",
+    "storeName": "Store Name",
+    "storeNamePlaceholder": "Enter store name",
+    "secondaryColour": "Secondary Colour",
+    "submit": "Submit Store"
+  },
+  "errors": {
+    "required": "This field is required",
+    "storeName": "Store name is required",
+    "logoUrl": "Store image is required",
+    "primaryColour": "Primary colour is required",
+    "secondaryColour": "Secondary colour is required",
+    "completeAllFields": "Please fill in all required fields.",
+    "apiError": "API Error",
+    "connectionError": "Connection error"
+  },
+  "success": {
+    "storeAdded": "Store added successfully 🎉"
+  }
+}

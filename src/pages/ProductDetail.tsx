@@ -3,20 +3,21 @@ import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NavBar from "../components/NavBar";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Importar FontAwesomeIcon
-import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons"; // Corazón lleno
-import { faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons"; // Corazón vacío
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { Skeleton } from "@mui/material";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isFavorite, setIsFavorite] = useState<boolean>(false); // Estado para favoritos
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
 
   useEffect(() => {
@@ -30,7 +31,6 @@ const ProductDetail = () => {
         })
         .then((data) => {
           setProduct(data.product);
-          console.log(data?.product?.url_image || "No image available");
           setLoading(false);
         })
         .catch(() => {
@@ -43,9 +43,8 @@ const ProductDetail = () => {
     }
   }, [id]);
 
-  
   const toggleFavorite = () => {
-    setIsFavorite(!isFavorite); // Cambiar el estado de favorito
+    setIsFavorite(!isFavorite);
     toast.success(
       isFavorite
         ? "Producto removido de favoritos"
@@ -96,7 +95,6 @@ const ProductDetail = () => {
       .then((response) => {
         if (!response.ok) {
           return response.json().then((err) => {
-            console.error("Error al eliminar:", err);
             throw new Error("Error al eliminar el producto");
           });
         }
@@ -106,22 +104,15 @@ const ProductDetail = () => {
         }, 2000);
       })
       .catch((err) => {
-        console.error("Error al intentar eliminar el producto:", err);
         toast.error("Error al eliminar el producto");
       });
   };
 
-  if (loading) {
-    return <div>Cargando...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
   const handleQuantityChange = (event: any) => {
     const value = event.target.value;
     setSelectedQuantity(value);
   };
+
   const renderQuantityOptions = () => {
     const options = [];
     for (let i = 1; i <= product.stock; i++) {
@@ -133,19 +124,38 @@ const ProductDetail = () => {
     }
     return options;
   };
+
+  // Render Skeleton when loading
+  if (loading) {
+    return (
+      <div>
+        <NavBar />
+        <div className="mt-6 container mx-auto max-w-screen-lg px-4 py-6 text-customText bg-white">
+          <div className="flex flex-col lg:flex-row gap-8">
+            <div className="flex-1">
+              <Skeleton variant="rectangular" width="100%" height={300} />
+            </div>
+            <div className="flex-1">
+              <Skeleton variant="text" height={50} width="60%" />
+              <Skeleton variant="text" height={30} width="40%" />
+              <Skeleton variant="text" height={30} width="40%" />
+              <Skeleton variant="rectangular" height={50} width="50%" />
+              <Skeleton variant="rectangular" height={50} width="50%" className="mt-4" />
+              <Skeleton variant="rectangular" height={50} width="50%" className="mt-4" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <div>
-      <NavBar
-        {...{
-          onSearch: () => {},
-          searchTerm: "",
-          searchSuggestions: [],
-          onFilterCategory: () => {},
-          onSortPrice: () => {},
-          categories: [],
-          onInputChange: () => {},
-        }}
-      />
+      <NavBar />
       <ToastContainer position="top-right" autoClose={3000} />
       {product && (
         <div className="mt-6 container mx-auto max-w-screen-lg px-4 py-6 text-customText bg-white">
@@ -161,29 +171,24 @@ const ProductDetail = () => {
               <div>
                 <div className="flex items-center">
                   <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-                  <button
-                    onClick={toggleFavorite}
-                    className="ml-4 text-3xl mb-4"
-                  >
+                  <button onClick={toggleFavorite} className="ml-4 text-3xl mb-4">
                     {isFavorite ? (
                       <FontAwesomeIcon
                         icon={solidHeart}
                         className="text-customPrice"
-                      /> // Corazón lleno si es favorito
+                      />
                     ) : (
                       <FontAwesomeIcon
                         icon={regularHeart}
                         className="text-[#0e3541] hover:text-customPrice"
-                      /> // Corazón vacío si no lo es
+                      />
                     )}
                   </button>
                 </div>
                 <p className="text-gray-600 mb-6">{product.description}</p>
-                <p className="text-2xl font-semibold mb-6">
-                  ${product.price} USD
-                </p>
+                <p className="text-2xl font-semibold mb-6">${product.price} USD</p>
               </div>
-              <div className="flex flex-col-reverse ">
+              <div className="flex flex-col-reverse">
                 <div className="flex items-left flex-col mt-10">
                   <span className="text-1xl font-semibold mb-4 py-3">
                     Stock disponible:

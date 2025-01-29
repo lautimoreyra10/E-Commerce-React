@@ -17,7 +17,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null); // Estado para la URL de la imagen
-  const maxDescriptionLength = 50; // Número máximo de caracteres para mostrar inicialmente
+  const maxDescriptionLength = 20;
 
   useEffect(() => {
     const fetchImageUrl = async () => {
@@ -54,15 +54,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       />
       <hr className="border-customBackground w-full" />
       <h2 className="text-customText text-lg font-semibold mt-4">{product.name}</h2>
-
+          
       {/* Descripción del producto */}
       <p className="text-customText my-2 text-left">
         {showFullDescription
-          ? product.description
-          : `${product.description.slice(0, maxDescriptionLength)}...`}
+          ? product.description // Muestra toda la descripción si se hace clic en "Ver más"
+          : `${product.description.slice(0, maxDescriptionLength)}...`} {/* Muestra solo los primeros 50 caracteres */}
         {product.description.length > maxDescriptionLength && (
           <button
-            className="text-customPrice text-sm font-medium underline"
+            className="text-customPrice text-sm font-medium underline ml-2"
             onClick={toggleDescription}
           >
             {showFullDescription ? "Ver menos" : "Ver más"}

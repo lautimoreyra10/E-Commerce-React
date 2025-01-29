@@ -9,6 +9,7 @@ import ProductDetail from './pages/ProductDetail';
 import ProfilePage from './pages/Profile';
 import Cart from './pages/Cart';
 import AuthLogin from './components/AuthLogin';
+import AddStore from './pages/AddStore';
 /* import AuthProfile from './components/AuthProfile'; */
 
 
@@ -23,6 +24,7 @@ const App: React.FC = () => {
         <Route path= "/add-product" element={<AddProduct />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/AddStore" element={<AddStore />} />
       </Routes>
     </Router>
   );
